@@ -1,13 +1,14 @@
 import React from "react";
 import useSWR from "swr";
-import { fetcher } from "../../config/config";
+import { fetcher, tmdbAPI } from "../../config/config";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useNavigate } from "react-router-dom";
 import BannerLoading from "../loading/BannerLoading";
+import Button from "../button/Button";
 
 const Banner = () => {
   const { data: moviesData, isLoading } = useSWR(
-    "https://api.themoviedb.org/3/movie/upcoming?language=vi-VN&page=1",
+    tmdbAPI.getMovieList("upcoming"),
     fetcher,
     {
       revalidateIfStale: false,
@@ -17,15 +18,11 @@ const Banner = () => {
   );
   const movies = moviesData?.results || [];
 
-  const { data: genresData } = useSWR(
-    "https://api.themoviedb.org/3/genre/movie/list?language=vi",
-    fetcher,
-    {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
-  );
+  const { data: genresData } = useSWR(tmdbAPI.getMovieGenres(), fetcher, {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  });
   const genres = genresData?.genres || [];
 
   return (
@@ -58,8 +55,8 @@ function BannerItem({ item, genres }) {
       <img
         src={
           backdrop_path
-            ? `https://image.tmdb.org/t/p/original/${backdrop_path}`
-            : "https://logowik.com/content/uploads/images/imdb-internet-movie-database5351.jpg"
+            ? tmdbAPI.getImageMovie(backdrop_path)
+            : tmdbAPI.getDefaultImageMovie
         }
         alt=""
         className="w-full h-full object-cover rounded-lg"
@@ -77,12 +74,7 @@ function BannerItem({ item, genres }) {
               </span>
             ))}
         </div>
-        <button
-          onClick={() => navigate(`/movie/${id}`)}
-          className="py-3 px-6 rounded-lg bg-primary text-white font-medium"
-        >
-          Watch Now
-        </button>
+        <Button onClick={() => navigate(`/movie/${id}`)}>Watch now</Button>
       </div>
     </div>
   );

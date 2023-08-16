@@ -1,6 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
+import Button from "../button/Button";
+import { tmdbAPI } from "../../config/config";
 
 const MovieCard = ({ item }) => {
   const { title, vote_average, release_date, poster_path, id } = item;
@@ -10,8 +12,8 @@ const MovieCard = ({ item }) => {
       <img
         src={
           poster_path
-            ? `https://image.tmdb.org/t/p/w500/${poster_path}`
-            : "https://logowik.com/content/uploads/images/imdb-internet-movie-database5351.jpg"
+            ? tmdbAPI.getImageMovie(poster_path, "w500")
+            : tmdbAPI.getDefaultImageMovie
         }
         alt=""
         className="w-full h-[350px] object-cover rounded-lg mb-5"
@@ -22,12 +24,7 @@ const MovieCard = ({ item }) => {
           <span>{new Date(release_date).getFullYear()}</span>
           <span>{vote_average}</span>
         </div>
-        <button
-          onClick={() => navigate(`/movie/${id}`)}
-          className="py-3 px-6 rounded-lg capitalize bg-primary w-full mt-auto"
-        >
-          Watch now
-        </button>
+        <Button onClick={() => navigate(`/movie/${id}`)}>Watch now</Button>
       </div>
     </div>
   );

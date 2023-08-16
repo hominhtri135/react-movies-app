@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { fetcher } from "../config/config";
+import { fetcher, tmdbAPI } from "../config/config";
 import useSWR from "swr";
 import { Swiper, SwiperSlide } from "swiper/react";
 import MovieCard from "../components/movie/MovieCard";
@@ -9,7 +9,7 @@ import MovieDetailsLoading from "../components/loading/MovieDetailsLoading";
 const MovieDetailsPage = () => {
   const { movieId } = useParams();
   const { data, isLoading } = useSWR(
-    `https://api.themoviedb.org/3/movie/${movieId}?language=vi-VN`,
+    tmdbAPI.getMovieDetails(movieId),
     fetcher,
     {
       revalidateIfStale: false,
@@ -17,20 +17,33 @@ const MovieDetailsPage = () => {
       revalidateOnReconnect: false,
     }
   );
-  if (!data) return;
-  const { backdrop_path, poster_path, title, genres, overview } = data;
+
+  const { backdrop_path, poster_path, title, genres, overview } =
+    data === undefined
+      ? {
+          backdrop_path: "",
+          poster_path: "",
+          title: "",
+          genres: "",
+          overview: "",
+        }
+      : data;
 
   return (
     <div className="py-10 px-5">
-      {isLoading && <MovieDetailsLoading></MovieDetailsLoading>}
-      {!isLoading && (
+      {isLoading && !data && <MovieDetailsLoading></MovieDetailsLoading>}
+      {!isLoading && data && (
         <>
           <div className="w-full h-[600px] relative">
             <div className="absolute inset-0 bg-black bg-opacity-70"></div>
             <div
               className="w-full h-full bg-cover"
               style={{
-                backgroundImage: `url(https://image.tmdb.org/t/p/original/${backdrop_path})`,
+                backgroundImage: `url(${
+                  backdrop_path
+                    ? tmdbAPI.getImageMovie(backdrop_path)
+                    : tmdbAPI.getDefaultImageMovie
+                })`,
               }}
             ></div>
           </div>
@@ -38,8 +51,8 @@ const MovieDetailsPage = () => {
             <img
               src={
                 poster_path
-                  ? `https://image.tmdb.org/t/p/original/${poster_path}`
-                  : "https://logowik.com/content/uploads/images/imdb-internet-movie-database5351.jpg"
+                  ? tmdbAPI.getImageMovie(poster_path)
+                  : tmdbAPI.getDefaultImageMovie
               }
               alt=""
               className="w-full h-full object-cover rounded-xl"
@@ -77,15 +90,11 @@ const MovieDetailsPage = () => {
 
 function MovieCredits() {
   const { movieId } = useParams();
-  const { data } = useSWR(
-    `https://api.themoviedb.org/3/movie/${movieId}/credits?language=vi-VN`,
-    fetcher,
-    {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
-  );
+  const { data } = useSWR(tmdbAPI.getMovieCredits(movieId), fetcher, {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  });
 
   if (!data) return null;
   const { cast } = data;
@@ -99,8 +108,8 @@ function MovieCredits() {
             <img
               src={
                 item.profile_path
-                  ? `https://image.tmdb.org/t/p/original/${item.profile_path}`
-                  : "https://logowik.com/content/uploads/images/imdb-internet-movie-database5351.jpg"
+                  ? tmdbAPI.getImageMovie(item.profile_path)
+                  : tmdbAPI.getDefaultImageMovie
               }
               alt=""
               className="w-full h-[350px] object-cover rounded-lg mb-3"
@@ -115,15 +124,11 @@ function MovieCredits() {
 
 function MovieVideo() {
   const { movieId } = useParams();
-  const { data } = useSWR(
-    `https://api.themoviedb.org/3/movie/${movieId}/videos?language=vi-VN`,
-    fetcher,
-    {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
-  );
+  const { data } = useSWR(tmdbAPI.getMovieVideo(movieId), fetcher, {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  });
 
   if (!data) return null;
   const { results } = data;
@@ -158,18 +163,13 @@ function MovieVideo() {
 
 function MovieSimilar() {
   const { movieId } = useParams();
-  const { data } = useSWR(
-    `https://api.themoviedb.org/3/movie/${movieId}/similar?language=vi-VN`,
-    fetcher,
-    {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
-  );
+  const { data } = useSWR(tmdbAPI.getMovieSimilar(movieId), fetcher, {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  });
 
   if (!data) return null;
-  console.log(data);
   const { results } = data;
   if (!results || results.length <= 0) return null;
 

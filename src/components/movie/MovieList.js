@@ -2,19 +2,15 @@ import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import MovieCard from "./MovieCard";
 import useSWR from "swr";
-import { fetcher } from "../../config/config";
+import { fetcher, tmdbAPI } from "../../config/config";
 import MovieItemLoading from "../loading/MovieItemLoading";
 
-const MovieList = ({ category = "now_playing" }) => {
-  const { data, isLoading } = useSWR(
-    `https://api.themoviedb.org/3/movie/${category}?language=vi-VN&page=1`,
-    fetcher,
-    {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
-  );
+const MovieList = ({ type = "now_playing" }) => {
+  const { data, isLoading } = useSWR(tmdbAPI.getMovieList(type), fetcher, {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+  });
   const movies = data?.results || [];
 
   return (

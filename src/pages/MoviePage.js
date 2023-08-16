@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetcher } from "../config/config";
+import { fetcher, tmdbAPI } from "../config/config";
 import useSWR from "swr";
 import MovieCard from "../components/movie/MovieCard";
 import { debounce } from "lodash";
@@ -8,34 +8,20 @@ import MovieItemLoading from "../components/loading/MovieItemLoading";
 
 const MoviePage = () => {
   const [nextPage, setNextPage] = useState(1);
-  console.log("MoviePage ~ nextPage:", nextPage);
   const [filter, setFilter] = useState("");
-  console.log("MoviePage ~ filter:", filter);
-  const [url, setUrl] = useState(
-    `https://api.themoviedb.org/3/movie/popular?language=vi-VN&page=${nextPage}`
-  );
+  const [url, setUrl] = useState(tmdbAPI.getMovieList("popular", nextPage));
 
-  const handleFilterChange = (e) => {
-    setFilter(e.target.value);
-    setNextPage(1);
-  };
   const { data, isLoading } = useSWR(url, fetcher);
 
   useEffect(() => {
     if (filter) {
-      setUrl(
-        `https://api.themoviedb.org/3/search/movie?query=${filter}&language=vi-VN&page=${nextPage}`
-      );
+      setUrl(tmdbAPI.getMovieSearch(filter, nextPage));
     } else {
-      setUrl(
-        `https://api.themoviedb.org/3/movie/popular?language=vi-VN&page=${nextPage}`
-      );
+      setUrl(tmdbAPI.getMovieList("popular", nextPage));
     }
   }, [filter, nextPage]);
 
   const movies = data?.results || [];
-  console.log("MoviePage ~ data:", data);
-
   const total_pages = data
     ? data.results.length > 0
       ? data.total_pages <= 500
@@ -43,7 +29,11 @@ const MoviePage = () => {
         : 500
       : 0
     : 0;
-  console.log("MoviePage ~ total_pages:", total_pages);
+
+  const handleFilterChange = (e) => {
+    setFilter(e.target.value);
+    setNextPage(1);
+  };
 
   const handlePageClick = (event) => {
     setNextPage(event.selected + 1);
