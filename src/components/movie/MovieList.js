@@ -3,9 +3,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import MovieCard from "./MovieCard";
 import useSWR from "swr";
 import { fetcher } from "../../config/config";
+import MovieItemLoading from "../loading/MovieItemLoading";
 
 const MovieList = ({ category = "now_playing" }) => {
-  const { data } = useSWR(
+  const { data, isLoading } = useSWR(
     `https://api.themoviedb.org/3/movie/${category}?language=vi-VN&page=1`,
     fetcher,
     {
@@ -19,7 +20,14 @@ const MovieList = ({ category = "now_playing" }) => {
   return (
     <div className="movie-list">
       <Swiper grabCursor={"true"} spaceBetween={40} slidesPerView={"auto"}>
-        {movies.length > 0 &&
+        {isLoading &&
+          new Array(5).fill(0).map((item, index) => (
+            <SwiperSlide key={index}>
+              <MovieItemLoading></MovieItemLoading>
+            </SwiperSlide>
+          ))}
+        {!isLoading &&
+          movies.length > 0 &&
           movies.map((movie) => (
             <SwiperSlide key={movie.id}>
               <MovieCard item={movie}></MovieCard>

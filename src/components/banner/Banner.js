@@ -3,9 +3,10 @@ import useSWR from "swr";
 import { fetcher } from "../../config/config";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useNavigate } from "react-router-dom";
+import BannerLoading from "../loading/BannerLoading";
 
 const Banner = () => {
-  const { data: moviesData } = useSWR(
+  const { data: moviesData, isLoading } = useSWR(
     "https://api.themoviedb.org/3/movie/upcoming?language=vi-VN&page=1",
     fetcher,
     {
@@ -29,14 +30,17 @@ const Banner = () => {
 
   return (
     <section className="banner h-[500px] page-container mb-20 overflow-hidden">
-      <Swiper grabCursor="true" slidesPerView={"auto"}>
-        {movies.length > 0 &&
-          movies.map((movie) => (
-            <SwiperSlide key={movie.id}>
-              <BannerItem item={movie} genres={genres}></BannerItem>
-            </SwiperSlide>
-          ))}
-      </Swiper>
+      {isLoading && <BannerLoading></BannerLoading>}
+      {!isLoading && (
+        <Swiper grabCursor="true" slidesPerView={"auto"}>
+          {movies.length > 0 &&
+            movies.map((movie) => (
+              <SwiperSlide key={movie.id}>
+                <BannerItem item={movie} genres={genres}></BannerItem>
+              </SwiperSlide>
+            ))}
+        </Swiper>
+      )}
     </section>
   );
 };

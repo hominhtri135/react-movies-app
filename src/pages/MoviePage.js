@@ -4,6 +4,7 @@ import useSWR from "swr";
 import MovieCard from "../components/movie/MovieCard";
 import { debounce } from "lodash";
 import ReactPaginate from "react-paginate";
+import MovieItemLoading from "../components/loading/MovieItemLoading";
 
 const MoviePage = () => {
   const [nextPage, setNextPage] = useState(1);
@@ -77,10 +78,16 @@ const MoviePage = () => {
           </svg>
         </button>
       </div>
-      {isLoading && (
+      {/* {isLoading && (
         <div className="w-10 h-10 rounded-full border-4 border-primary border-t-transparent border-t-4 mx-auto animate-spin"></div>
-      )}
+      )} */}
       <div className="grid grid-cols-4 gap-10">
+        {isLoading &&
+          new Array(8)
+            .fill(0)
+            .map((item, index) => (
+              <MovieItemLoading key={index}></MovieItemLoading>
+            ))}
         {!isLoading &&
           movies.length > 0 &&
           movies.map((movie) => (

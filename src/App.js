@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import "swiper/scss";
+import "react-loading-skeleton/dist/skeleton.css";
 import Banner from "./components/banner/Banner";
 import HomePage from "./pages/HomePage";
 import { Route, Routes } from "react-router-dom";
