@@ -1,10 +1,11 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { fetcher, tmdbAPI } from "../config/config";
+import { fetcher, tmdbAPI } from "apiConfig/config";
 import useSWR from "swr";
 import { Swiper, SwiperSlide } from "swiper/react";
-import MovieCard from "../components/movie/MovieCard";
-import MovieDetailsLoading from "../components/loading/MovieDetailsLoading";
+import MovieCard from "components/movie/MovieCard";
+import MovieDetailsLoading from "components/loading/MovieDetailsLoading";
+import { Helmet } from "react-helmet";
 
 const MovieDetailsPage = () => {
   const { movieId } = useParams();
@@ -29,9 +30,44 @@ const MovieDetailsPage = () => {
         }
       : data;
 
+  function createMetaTagFacebook(type, title, description, image) {
+    const metaTagFaceBook = [];
+    if (type) metaTagFaceBook.push({ property: "og:type", content: type });
+    if (title) metaTagFaceBook.push({ property: "og:title", content: title });
+    if (description)
+      metaTagFaceBook.push({
+        property: "og:description",
+        content: description,
+      });
+    if (image) metaTagFaceBook.push({ property: "og:image", content: image });
+    return metaTagFaceBook;
+  }
+
   return (
     <div className="py-10 px-5">
       {isLoading && !data && <MovieDetailsLoading></MovieDetailsLoading>}
+
+      {!isLoading && data && (
+        <Helmet
+          onChangeClientState={(newState, addedTags, removedTags) => {}}
+          defaultTitle="My Site"
+          titleTemplate="MRA | %s"
+        >
+          <title>{title}</title>
+          <meta name="description" content="Home component" />
+          {createMetaTagFacebook(
+            "article",
+            title,
+            overview,
+            tmdbAPI.imageOriginal(poster_path)
+          ).map((item) => {
+            return (
+              <meta property={item.property} content={`${item.content}`} />
+            );
+          })}
+        </Helmet>
+      )}
+
       {!isLoading && data && (
         <>
           <div className="w-full h-[600px] relative">
@@ -41,8 +77,8 @@ const MovieDetailsPage = () => {
               style={{
                 backgroundImage: `url(${
                   backdrop_path
-                    ? tmdbAPI.getImageMovie(backdrop_path)
-                    : tmdbAPI.getDefaultImageMovie
+                    ? tmdbAPI.imageOriginal(backdrop_path)
+                    : tmdbAPI.imageDefault()
                 })`,
               }}
             ></div>
@@ -51,8 +87,8 @@ const MovieDetailsPage = () => {
             <img
               src={
                 poster_path
-                  ? tmdbAPI.getImageMovie(poster_path)
-                  : tmdbAPI.getDefaultImageMovie
+                  ? tmdbAPI.imageOriginal(poster_path)
+                  : tmdbAPI.imageDefault()
               }
               alt=""
               className="w-full h-full object-cover rounded-xl"
@@ -90,7 +126,7 @@ const MovieDetailsPage = () => {
 
 function MovieCredits() {
   const { movieId } = useParams();
-  const { data } = useSWR(tmdbAPI.getMovieCredits(movieId), fetcher, {
+  const { data } = useSWR(tmdbAPI.getMovieMeta(movieId, "credits"), fetcher, {
     revalidateIfStale: false,
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
@@ -108,8 +144,8 @@ function MovieCredits() {
             <img
               src={
                 item.profile_path
-                  ? tmdbAPI.getImageMovie(item.profile_path)
-                  : tmdbAPI.getDefaultImageMovie
+                  ? tmdbAPI.imageOriginal(item.profile_path)
+                  : tmdbAPI.imageDefault()
               }
               alt=""
               className="w-full h-[350px] object-cover rounded-lg mb-3"
@@ -124,7 +160,7 @@ function MovieCredits() {
 
 function MovieVideo() {
   const { movieId } = useParams();
-  const { data } = useSWR(tmdbAPI.getMovieVideo(movieId), fetcher, {
+  const { data } = useSWR(tmdbAPI.getMovieMeta(movieId, "videos"), fetcher, {
     revalidateIfStale: false,
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
@@ -163,7 +199,7 @@ function MovieVideo() {
 
 function MovieSimilar() {
   const { movieId } = useParams();
-  const { data } = useSWR(tmdbAPI.getMovieSimilar(movieId), fetcher, {
+  const { data } = useSWR(tmdbAPI.getMovieMeta(movieId, "similar"), fetcher, {
     revalidateIfStale: false,
     revalidateOnFocus: false,
     revalidateOnReconnect: false,

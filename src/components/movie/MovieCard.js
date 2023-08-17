@@ -1,8 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
-import Button from "../button/Button";
-import { tmdbAPI } from "../../config/config";
+import Button from "components/button/Button";
+import { tmdbAPI } from "apiConfig/config";
 
 const MovieCard = ({ item }) => {
   const { title, vote_average, release_date, poster_path, id } = item;
@@ -11,9 +11,7 @@ const MovieCard = ({ item }) => {
     <div className="movie-card flex flex-col rounded-lg p-3 bg-slate-800 text-white h-full select-none">
       <img
         src={
-          poster_path
-            ? tmdbAPI.getImageMovie(poster_path, "w500")
-            : tmdbAPI.getDefaultImageMovie
+          poster_path ? tmdbAPI.image500(poster_path) : tmdbAPI.imageDefault()
         }
         alt=""
         className="w-full h-[350px] object-cover rounded-lg mb-5"
@@ -24,7 +22,9 @@ const MovieCard = ({ item }) => {
           <span>{new Date(release_date).getFullYear()}</span>
           <span>{vote_average}</span>
         </div>
-        <Button onClick={() => navigate(`/movie/${id}`)}>Watch now</Button>
+        <Button onClick={() => navigate(`/react-movies-app/movie/${id}`)}>
+          Watch now
+        </Button>
       </div>
     </div>
   );

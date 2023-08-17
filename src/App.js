@@ -14,7 +14,7 @@ function App() {
       <Routes>
         <Route element={<Main></Main>}>
           <Route
-            path="/"
+            path="/react-movies-app"
             element={
               <>
                 <Banner></Banner>
@@ -22,9 +22,12 @@ function App() {
               </>
             }
           ></Route>
-          <Route path="/movies" element={<MoviePage></MoviePage>}></Route>
           <Route
-            path="/movie/:movieId"
+            path="/react-movies-app/movies"
+            element={<MoviePage></MoviePage>}
+          ></Route>
+          <Route
+            path="/react-movies-app/movie/:movieId"
             element={<MovieDetailsPage></MovieDetailsPage>}
           ></Route>
         </Route>

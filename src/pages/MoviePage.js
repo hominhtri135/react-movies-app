@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { fetcher, tmdbAPI } from "../config/config";
+import { fetcher, tmdbAPI } from "apiConfig/config";
 import useSWR from "swr";
-import MovieCard from "../components/movie/MovieCard";
+import MovieCard from "components/movie/MovieCard";
 import { debounce } from "lodash";
 import ReactPaginate from "react-paginate";
-import MovieItemLoading from "../components/loading/MovieItemLoading";
+import MovieItemLoading from "components/loading/MovieItemLoading";
 
 const MoviePage = () => {
   const [nextPage, setNextPage] = useState(1);
@@ -37,6 +37,7 @@ const MoviePage = () => {
 
   const handlePageClick = (event) => {
     setNextPage(event.selected + 1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (

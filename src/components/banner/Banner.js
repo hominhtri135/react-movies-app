@@ -1,10 +1,10 @@
 import React from "react";
 import useSWR from "swr";
-import { fetcher, tmdbAPI } from "../../config/config";
+import { fetcher, tmdbAPI } from "apiConfig/config";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useNavigate } from "react-router-dom";
-import BannerLoading from "../loading/BannerLoading";
-import Button from "../button/Button";
+import BannerLoading from "components/loading/BannerLoading";
+import Button from "components/button/Button";
 
 const Banner = () => {
   const { data: moviesData, isLoading } = useSWR(
@@ -55,8 +55,8 @@ function BannerItem({ item, genres }) {
       <img
         src={
           backdrop_path
-            ? tmdbAPI.getImageMovie(backdrop_path)
-            : tmdbAPI.getDefaultImageMovie
+            ? tmdbAPI.imageOriginal(backdrop_path)
+            : tmdbAPI.imageDefault()
         }
         alt=""
         className="w-full h-full object-cover rounded-lg"
@@ -74,7 +74,9 @@ function BannerItem({ item, genres }) {
               </span>
             ))}
         </div>
-        <Button onClick={() => navigate(`/movie/${id}`)}>Watch now</Button>
+        <Button onClick={() => navigate(`/react-movies-app/movie/${id}`)}>
+          Watch now
+        </Button>
       </div>
     </div>
   );
