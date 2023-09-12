@@ -1,8 +1,9 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { useNavigate } from "react-router-dom";
 import Button from "components/button/Button";
+import PropTypes from "prop-types";
+import React from "react";
 import { tmdbAPI } from "apiConfig/config";
+import { useNavigate } from "react-router-dom";
+import { withErrorBoundary } from "react-error-boundary";
 
 const MovieCard = ({ item }) => {
   const { title, vote_average, release_date, poster_path, id } = item;
@@ -22,14 +23,28 @@ const MovieCard = ({ item }) => {
           <span>{new Date(release_date).getFullYear()}</span>
           <span>{vote_average}</span>
         </div>
-        <Button onClick={() => navigate(`/react-movies-app/movie/${id}`)}>
-          Watch now
-        </Button>
+        <Button onClick={() => navigate(`/movie/${id}`)}>Watch now</Button>
       </div>
     </div>
   );
 };
 
-MovieCard.PropsTypes = {};
+MovieCard.propsTypes = {
+  item: PropTypes.shape({
+    title: PropTypes.string,
+    vote_average: PropTypes.number,
+    release_date: PropTypes.string,
+    poster_path: PropTypes.string,
+    id: PropTypes.number,
+  }),
+};
 
-export default MovieCard;
+function FallbackComponent() {
+  return (
+    <p className="bg-red-50 text-red-400">
+      Something went wrong with this component
+    </p>
+  );
+}
+
+export default withErrorBoundary(MovieCard, { FallbackComponent });

@@ -1,17 +1,17 @@
-import React from "react";
 import { NavLink } from "react-router-dom";
+import React from "react";
 
 const Header = () => {
   return (
     <header className="header flex items-center justify-center gap-x-5 text-white py-10 mb-5">
       <NavLink
-        to="/react-movies-app/"
+        to="/"
         className={({ isActive }) => (isActive ? "text-primary" : "")}
       >
         Home
       </NavLink>
       <NavLink
-        to="/react-movies-app/movies"
+        to="/movies"
         className={({ isActive }) => (isActive ? "text-primary" : "")}
       >
         Movies

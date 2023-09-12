@@ -1,10 +1,11 @@
-import React from "react";
-import useSWR from "swr";
-import { fetcher, tmdbAPI } from "apiConfig/config";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { useNavigate } from "react-router-dom";
+import { fetcher, tmdbAPI } from "apiConfig/config";
+
 import BannerLoading from "components/loading/BannerLoading";
 import Button from "components/button/Button";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import useSWR from "swr";
 
 const Banner = () => {
   const { data: moviesData, isLoading } = useSWR(
@@ -74,9 +75,7 @@ function BannerItem({ item, genres }) {
               </span>
             ))}
         </div>
-        <Button onClick={() => navigate(`/react-movies-app/movie/${id}`)}>
-          Watch now
-        </Button>
+        <Button onClick={() => navigate(`/movie/${id}`)}>Watch now</Button>
       </div>
     </div>
   );

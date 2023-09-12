@@ -1,4 +1,5 @@
 import React, { Fragment } from "react";
+
 import MovieList from "components/movie/MovieList";
 
 const HomePage = () => {

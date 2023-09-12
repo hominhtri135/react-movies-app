@@ -1,9 +1,12 @@
-import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import MovieCard from "./MovieCard";
-import useSWR from "swr";
 import { fetcher, tmdbAPI } from "apiConfig/config";
+
+import MovieCard from "components/movie/MovieCard";
 import MovieItemLoading from "components/loading/MovieItemLoading";
+import PropTypes from "prop-types";
+import React from "react";
+import useSWR from "swr";
+import { withErrorBoundary } from "react-error-boundary";
 
 const MovieList = ({ type = "now_playing" }) => {
   const { data, isLoading } = useSWR(tmdbAPI.getMovieList(type), fetcher, {
@@ -34,4 +37,16 @@ const MovieList = ({ type = "now_playing" }) => {
   );
 };
 
-export default MovieList;
+MovieList.propTypes = {
+  type: PropTypes.string.isRequired,
+};
+
+function FallbackComponent() {
+  return (
+    <p className="bg-red-50 text-red-400">
+      Something went wrong with this component
+    </p>
+  );
+}
+
+export default withErrorBoundary(MovieList, { FallbackComponent });

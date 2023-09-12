@@ -1,11 +1,12 @@
-import React from "react";
-import { useParams } from "react-router-dom";
-import { fetcher, tmdbAPI } from "apiConfig/config";
-import useSWR from "swr";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { fetcher, tmdbAPI } from "apiConfig/config";
+
+import { Helmet } from "react-helmet";
 import MovieCard from "components/movie/MovieCard";
 import MovieDetailsLoading from "components/loading/MovieDetailsLoading";
-import { Helmet } from "react-helmet";
+import React from "react";
+import { useParams } from "react-router-dom";
+import useSWR from "swr";
 
 const MovieDetailsPage = () => {
   const { movieId } = useParams();
@@ -60,9 +61,13 @@ const MovieDetailsPage = () => {
             title,
             overview,
             tmdbAPI.imageOriginal(poster_path)
-          ).map((item) => {
+          ).map((item, index) => {
             return (
-              <meta property={item.property} content={`${item.content}`} />
+              <meta
+                property={item.property}
+                content={`${item.content}`}
+                key={index}
+              />
             );
           })}
         </Helmet>

@@ -1,8 +1,10 @@
-import { Fragment, lazy, Suspense } from "react";
 import "swiper/scss";
 import "react-loading-skeleton/dist/skeleton.css";
-import Banner from "components/banner/Banner";
+
+import { Fragment, Suspense, lazy } from "react";
 import { Route, Routes } from "react-router-dom";
+
+import Banner from "components/banner/Banner";
 import Main from "components/layout/Main";
 
 // dynamic imports
@@ -17,7 +19,7 @@ function App() {
         <Routes>
           <Route element={<Main></Main>}>
             <Route
-              path="/react-movies-app"
+              path="/"
               element={
                 <>
                   <Banner></Banner>
@@ -25,12 +27,9 @@ function App() {
                 </>
               }
             ></Route>
+            <Route path="/movies" element={<MoviePage></MoviePage>}></Route>
             <Route
-              path="/react-movies-app/movies"
-              element={<MoviePage></MoviePage>}
-            ></Route>
-            <Route
-              path="/react-movies-app/movie/:movieId"
+              path="/movie/:movieId"
               element={<MovieDetailsPage></MovieDetailsPage>}
             ></Route>
           </Route>
